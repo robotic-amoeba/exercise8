@@ -1,6 +1,8 @@
 const express = require("express");
+const os = require("os");
+
 const requestsWorker = require("./src/controllers/requestsWorker");
-const rollbackWorker = require("./src/controllers/rollbackWorker")
+const rollbackWorker = require("./src/controllers/rollbackWorker");
 
 const bodyParser = require("body-parser");
 const { Validator, ValidationError } = require("express-json-validator-middleware");
@@ -26,6 +28,15 @@ const creditSchema = {
 };
 
 app.post("/credit", bodyParser.json(), validate({ body: creditSchema }), updateCredit);
+
+app.get("/serverstatus", (req, res, next) => {
+  res.status(200).send("OK");
+});
+
+app.get("/hostname", (req, res, next) => {
+  const hostname = os.hostname();
+  res.status(200).send(hostname);
+});
 
 app.use(function(err, req, res, next) {
   console.log(res.body);

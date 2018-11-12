@@ -1,5 +1,5 @@
-const http = require("http");
 const express = require("express");
+const os = require("os");
 
 const bodyParser = require("body-parser");
 const { Validator, ValidationError } = require("express-json-validator-middleware");
@@ -41,6 +41,15 @@ app.post("/messages", bodyParser.json(), validate({ body: messageSchema }), requ
 app.get("/messages", getMessages);
 
 app.get("/messages/:requestID/status", getStatus);
+
+app.get("/serverstatus", (req, res, next) => {
+  res.status(200).send("OK");
+});
+
+app.get("/hostname", (req, res, next) => {
+  const hostname = os.hostname();
+  res.status(200).send(hostname);
+});
 
 app.use(function(err, req, res, next) {
   console.log(res.body);
