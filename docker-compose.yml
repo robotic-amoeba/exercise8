@@ -4,17 +4,24 @@ services:
     build: message/
     ports:
       - "9005:9005"
-    links:
-      - messageapp
-      - mongodb_message
-      - replica_message
-      - redis
-      - credit
     depends_on:
       - messageapp
       - mongodb_message
       - replica_message
       - redis
+      - credit
+
+  message2:
+    build: message/
+    ports:
+      - "9007:9005"
+    depends_on:
+      - messageapp
+      - mongodb_message
+      - replica_message
+      - redis
+      - credit
+
   credit:
     build: credit/
     ports:
@@ -27,6 +34,7 @@ services:
       - mongodb_credit
       - replica_credit
       - redis
+
   messageapp:
     image: cabify/backend-bootcamp-messageapp
     ports:
@@ -54,6 +62,7 @@ services:
       - ./message/data/db:/message/data/db
     ports:
       - 27027:27027
+
   replica_message:
     image: mongo
     command: mongod --port 27028
@@ -66,4 +75,13 @@ services:
     image: redis
     ports:
       - 6379:6379
+
+  haproxy:
+    build: ./haproxy
+    ports: 
+      - 80:80
+    depends_on:
+      - message
+      - message2
+
 
